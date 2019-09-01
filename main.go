@@ -13,10 +13,11 @@ const (
 	siteURL  = "https://graalagency.com"
 	endpoint = "http://localhost:4000/query"
 	query    = `{ "query": "{ clients: clients { slug } authors: authors { slug } }" }`
+	fileName = "./sitemap.xml"
 )
 
 func main() {
-	f, err := os.Create("./sitemap.xml")
+	f, err := os.Create(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
