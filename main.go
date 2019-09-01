@@ -10,10 +10,11 @@ import (
 )
 
 const (
-	siteURL  = "https://graalagency.com"
-	endpoint = "http://localhost:4000/query"
-	query    = `{ "query": "{ clients: clients { slug } authors: authors { slug } }" }`
-	fileName = "./sitemap.xml"
+	siteURL        = "https://graalagency.com"
+	endpoint       = "http://localhost:4000/query"
+	query          = `{ "query": "{ clients: clients { slug } authors: authors { slug } }" }`
+	fileName       = "./sitemap.xml"
+	includeAuthors = false
 )
 
 func main() {
@@ -75,12 +76,14 @@ func writeSitemap(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	sp := makeStaticPages(len(as) > 0)
+	sp := makeStaticPages(len(as) > 0 && includeAuthors)
 	us := newURLSet(
 		buildStatic(sp),
-		buildDynamic("authors", as),
 		buildDynamic("clients", cs),
 	)
+	if includeAuthors {
+		us.URLs = append(us.URLs, buildDynamic("authors", as)...)
+	}
 	output, err := xml.MarshalIndent(&us, "  ", "    ")
 	if err != nil {
 		return err
